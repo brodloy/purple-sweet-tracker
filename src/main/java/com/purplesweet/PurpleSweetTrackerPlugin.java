@@ -9,12 +9,7 @@ import javax.swing.SwingUtilities;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
-import net.runelite.api.GameState;
-import net.runelite.api.ItemContainer;
-import net.runelite.api.events.GameStateChanged;
-import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.MenuOptionClicked;
-import net.runelite.api.gameval.InventoryID;
 import net.runelite.api.gameval.ItemID;
 import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
@@ -80,11 +75,11 @@ public class PurpleSweetTrackerPlugin extends Plugin
 	private long sessionValue;
 	private long sessionStartMillis;
 
-	// For accurate counting: we only count a sweet when one actually leaves the inventory
-	// shortly after an "Eat" click, so spam-clicking during the eat cooldown isn't counted.
-	private static final int EAT_CLICK_WINDOW = 2; // game ticks
-	private int sweetCount = -1;     // last known inventory purple-sweet count (-1 = unknown)
-	private int eatClickTick = -100; // tick of the most recent purple-sweet "Eat" click
+	// Purple sweets share the standard food eat delay: one every 3 game ticks. We play the
+	// sound and count on the click, then ignore further clicks until you could eat again,
+	// so spam-clicking during the cooldown doesn't over-count.
+	private static final int EAT_DELAY_TICKS = 3;
+	private int lastEatTick = -100; // tick of the last counted eat
 
 	@Provides
 	PurpleSweetTrackerConfig provideConfig(ConfigManager configManager)
@@ -101,8 +96,7 @@ public class PurpleSweetTrackerPlugin extends Plugin
 		sessionEaten = 0;
 		sessionValue = 0L;
 		sessionStartMillis = System.currentTimeMillis();
-		sweetCount = -1;
-		eatClickTick = -100;
+		lastEatTick = -100;
 
 		overlayManager.add(overlay);
 
@@ -141,68 +135,26 @@ public class PurpleSweetTrackerPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		if (PURPLE_SWEET_IDS.contains(event.getItemId()) && "Eat".equalsIgnoreCase(event.getMenuOption()))
-		{
-			// Record intent only. The actual count happens when a sweet leaves the
-			// inventory (onItemContainerChanged), so spam-clicking during the eat
-			// cooldown doesn't over-count.
-			eatClickTick = client.getTickCount();
-		}
-	}
-
-	@Subscribe
-	public void onItemContainerChanged(ItemContainerChanged event)
-	{
-		if (event.getContainerId() != InventoryID.INV)
+		if (!PURPLE_SWEET_IDS.contains(event.getItemId()) || !"Eat".equalsIgnoreCase(event.getMenuOption()))
 		{
 			return;
 		}
 
-		final ItemContainer inventory = event.getItemContainer();
-		int newCount = 0;
-		for (int id : PURPLE_SWEET_IDS)
+		final int tick = client.getTickCount();
+		if (tick - lastEatTick < EAT_DELAY_TICKS)
 		{
-			newCount += inventory.count(id);
-		}
-
-		if (sweetCount < 0)
-		{
-			// First reading since login/enable — establish the baseline, don't count.
-			sweetCount = newCount;
+			// Still within the eat cooldown — the game won't consume another sweet yet,
+			// so this click doesn't count (and makes no sound).
 			return;
 		}
 
-		final int eaten = sweetCount - newCount;
-		sweetCount = newCount;
+		lastEatTick = tick;
 
-		// Only count a decrease that follows a recent "Eat" click, so banking, dropping
-		// or using sweets on something isn't mistaken for eating.
-		if (eaten > 0 && client.getTickCount() - eatClickTick <= EAT_CLICK_WINDOW)
-		{
-			eatClickTick = -100; // consumed; a fresh click is required for the next eat
-			registerEaten(eaten);
-		}
-	}
-
-	@Subscribe
-	public void onGameStateChanged(GameStateChanged event)
-	{
-		final GameState state = event.getGameState();
-		if (state == GameState.LOGIN_SCREEN || state == GameState.HOPPING || state == GameState.CONNECTION_LOST)
-		{
-			// Re-baseline against the fresh inventory on next login.
-			sweetCount = -1;
-		}
-	}
-
-	private void registerEaten(int amount)
-	{
 		final int price = Math.max(itemManager.getItemPrice(ItemID.TRAIL_SWEETS), 0);
-
-		lifetimeEaten += amount;
-		lifetimeValue += (long) price * amount;
-		sessionEaten += amount;
-		sessionValue += (long) price * amount;
+		lifetimeEaten++;
+		lifetimeValue += price;
+		sessionEaten++;
+		sessionValue += price;
 
 		config.lifetimeEaten(lifetimeEaten);
 		config.lifetimeValue(lifetimeValue);

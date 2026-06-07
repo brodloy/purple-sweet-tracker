@@ -5,6 +5,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -13,6 +16,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.util.QuantityFormatter;
@@ -33,6 +37,8 @@ class PurpleSweetTrackerPanel extends PluginPanel
 	private final JLabel sessionEaten = valueLabel();
 	private final JLabel sessionValue = valueLabel();
 	private final JLabel perHour = valueLabel();
+
+	private final JButton copyButton = new JButton("Copy stats");
 
 	PurpleSweetTrackerPanel(PurpleSweetTrackerPlugin plugin)
 	{
@@ -57,7 +63,7 @@ class PurpleSweetTrackerPanel extends PluginPanel
 		content.add(Box.createVerticalStrut(10));
 		content.add(buildSessionCard());
 		content.add(Box.createVerticalStrut(10));
-		content.add(fill(buildResetButton()));
+		content.add(fill(buildButtonRow()));
 
 		add(content, BorderLayout.NORTH);
 
@@ -83,11 +89,38 @@ class PurpleSweetTrackerPanel extends PluginPanel
 		return card;
 	}
 
-	private JButton buildResetButton()
+	private JPanel buildButtonRow()
 	{
+		final JPanel row = new JPanel(new GridLayout(1, 2, 8, 0));
+		row.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
 		final JButton reset = new JButton("Reset");
 		reset.addActionListener(e -> plugin.reset());
-		return reset;
+
+		copyButton.setToolTipText("Copy your sweet stats to the clipboard");
+		copyButton.addActionListener(e -> copyStats());
+
+		row.add(reset);
+		row.add(copyButton);
+		return row;
+	}
+
+	private void copyStats()
+	{
+		final String text = "Purple Sweet Tracker\n"
+			+ "All-time: " + QuantityFormatter.formatNumber(plugin.getLifetimeEaten()) + " eaten ("
+			+ QuantityFormatter.formatNumber(plugin.getLifetimeValue()) + " gp)\n"
+			+ "Session: " + QuantityFormatter.formatNumber(plugin.getSessionEaten()) + " eaten ("
+			+ QuantityFormatter.formatNumber(plugin.getSessionValue()) + " gp)\n"
+			+ "Per hour: " + QuantityFormatter.formatNumber(plugin.getSweetsPerHour());
+
+		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+
+		// Brief confirmation, then restore the label.
+		copyButton.setText("Copied!");
+		final Timer timer = new Timer(1500, e -> copyButton.setText("Copy stats"));
+		timer.setRepeats(false);
+		timer.start();
 	}
 
 	/**
