@@ -2,11 +2,12 @@ package com.purplesweet;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.swing.SwingUtilities;
-import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.events.MenuOptionClicked;
@@ -25,7 +26,6 @@ import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.ui.overlay.infobox.InfoBoxManager;
 import net.runelite.client.util.ImageUtil;
 
-@Slf4j
 @PluginDescriptor(
 	name = "Purple Sweet Tracker",
 	description = "Tracks the purple sweets you eat and their value, with a configurable sound, overlay and infobox.",
@@ -207,6 +207,17 @@ public class PurpleSweetTrackerPlugin extends Plugin
 		return sessionValue;
 	}
 
+	// What the overlay/infobox should show, per the "Stats shown" config (lifetime vs session).
+	int getDisplayedEaten()
+	{
+		return config.statsSource() == StatsSource.SESSION ? sessionEaten : lifetimeEaten;
+	}
+
+	long getDisplayedValue()
+	{
+		return config.statsSource() == StatsSource.SESSION ? sessionValue : lifetimeValue;
+	}
+
 	int getSweetsPerHour()
 	{
 		final long elapsedMillis = System.currentTimeMillis() - sessionStartMillis;
@@ -256,7 +267,7 @@ public class PurpleSweetTrackerPlugin extends Plugin
 	 * the fullest "pile" model. Passing stackable=false renders that model WITHOUT drawing
 	 * the quantity number, so we get the big-stack graphic with no number on it.
 	 */
-	private java.awt.image.BufferedImage maxStackImage()
+	private BufferedImage maxStackImage()
 	{
 		return itemManager.getImage(ItemID.TRAIL_SWEETS, 100_000, false);
 	}
@@ -264,17 +275,17 @@ public class PurpleSweetTrackerPlugin extends Plugin
 	/**
 	 * OSRS-style stack colouring for a gp value: yellow, then white, then green.
 	 */
-	static java.awt.Color valueColor(long value)
+	static Color valueColor(long value)
 	{
 		if (value >= 10_000_000)
 		{
-			return new java.awt.Color(0, 222, 90);   // green
+			return new Color(0, 222, 90);   // green
 		}
 		if (value >= 100_000)
 		{
-			return java.awt.Color.WHITE;
+			return Color.WHITE;
 		}
-		return java.awt.Color.YELLOW;
+		return Color.YELLOW;
 	}
 
 	private void maybeNotifyMilestone()

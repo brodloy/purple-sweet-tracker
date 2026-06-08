@@ -62,10 +62,22 @@ public interface PurpleSweetTrackerConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "statsSource",
+		name = "Stats shown",
+		description = "Whether the overlay and infobox show your all-time totals or just this session.",
+		position = 3,
+		section = displaySection
+	)
+	default StatsSource statsSource()
+	{
+		return StatsSource.LIFETIME;
+	}
+
+	@ConfigItem(
 		keyName = "overlayShowEaten",
 		name = "Overlay: sweets eaten",
 		description = "Show the 'Eaten' line on the overlay box.",
-		position = 3,
+		position = 4,
 		section = displaySection
 	)
 	default boolean overlayShowEaten()
@@ -77,7 +89,7 @@ public interface PurpleSweetTrackerConfig extends Config
 		keyName = "overlayShowValue",
 		name = "Overlay: value",
 		description = "Show the 'Value' line on the overlay box.",
-		position = 4,
+		position = 5,
 		section = displaySection
 	)
 	default boolean overlayShowValue()
@@ -89,7 +101,7 @@ public interface PurpleSweetTrackerConfig extends Config
 		keyName = "overlayShowPerHour",
 		name = "Overlay: per hour",
 		description = "Show the 'Per hour' line on the overlay box.",
-		position = 5,
+		position = 6,
 		section = displaySection
 	)
 	default boolean overlayShowPerHour()
@@ -102,7 +114,7 @@ public interface PurpleSweetTrackerConfig extends Config
 		keyName = "overlayColor",
 		name = "Overlay title colour",
 		description = "Colour of the overlay/infobox title text.",
-		position = 6,
+		position = 7,
 		section = displaySection
 	)
 	default Color overlayColor()

@@ -26,9 +26,9 @@ class PurpleSweetInfoBox extends InfoBox
 	{
 		if (config.infoboxContent() == InfoboxContent.VALUE)
 		{
-			return QuantityFormatter.quantityToStackSize(plugin.getLifetimeValue());
+			return QuantityFormatter.quantityToStackSize(plugin.getDisplayedValue());
 		}
-		return QuantityFormatter.quantityToStackSize(plugin.getLifetimeEaten());
+		return QuantityFormatter.quantityToStackSize(plugin.getDisplayedEaten());
 	}
 
 	@Override
@@ -37,7 +37,7 @@ class PurpleSweetInfoBox extends InfoBox
 		// Colour the value (green at high amounts); keep the amount white.
 		if (config.infoboxContent() == InfoboxContent.VALUE)
 		{
-			return PurpleSweetTrackerPlugin.valueColor(plugin.getLifetimeValue());
+			return PurpleSweetTrackerPlugin.valueColor(plugin.getDisplayedValue());
 		}
 		return Color.WHITE;
 	}
@@ -45,8 +45,8 @@ class PurpleSweetInfoBox extends InfoBox
 	@Override
 	public String getTooltip()
 	{
-		return "Purple sweets eaten: " + QuantityFormatter.formatNumber(plugin.getLifetimeEaten())
-			+ "</br>Value: " + QuantityFormatter.formatNumber(plugin.getLifetimeValue()) + " gp"
+		return config.statsSource() + " sweets eaten: " + QuantityFormatter.formatNumber(plugin.getDisplayedEaten())
+			+ "</br>Value: " + QuantityFormatter.formatNumber(plugin.getDisplayedValue()) + " gp"
 			+ "</br>Per hour: " + QuantityFormatter.formatNumber(plugin.getSweetsPerHour());
 	}
 }

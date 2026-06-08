@@ -22,9 +22,11 @@ public class PurpleSweetTrackerOverlay extends OverlayPanel
 	{
 		this.plugin = plugin;
 		this.config = config;
-		// DETACHED makes the box freely draggable anywhere on screen, and RuneLite
-		// remembers where the user drops it.
-		setPosition(OverlayPosition.DETACHED);
+		// A default anchor; making the box movable AND snappable lets the user drag it
+		// anywhere and have it snap to corners/other overlays, like a standard overlay.
+		setPosition(OverlayPosition.TOP_LEFT);
+		setMovable(true);
+		setSnappable(true);
 		// Minimum width for the box (the user can still drag-resize it wider).
 		setMinimumSize(MIN_WIDTH);
 		panelComponent.setPreferredSize(new Dimension(150, 0));
@@ -49,13 +51,13 @@ public class PurpleSweetTrackerOverlay extends OverlayPanel
 		{
 			panelComponent.getChildren().add(LineComponent.builder()
 				.left("Eaten:")
-				.right(QuantityFormatter.formatNumber(plugin.getLifetimeEaten()))
+				.right(QuantityFormatter.formatNumber(plugin.getDisplayedEaten()))
 				.build());
 		}
 
 		if (config.overlayShowValue())
 		{
-			final long value = plugin.getLifetimeValue();
+			final long value = plugin.getDisplayedValue();
 			panelComponent.getChildren().add(LineComponent.builder()
 				.left("Value:")
 				.right(QuantityFormatter.quantityToStackSize(value) + " gp")
