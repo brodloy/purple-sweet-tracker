@@ -304,19 +304,11 @@ public class PurpleSweetTrackerPlugin extends Plugin
 
 	private void playSound()
 	{
-		if (!config.playSound())
+		if (config.playSound())
 		{
-			return;
+			// Plays at the player's in-game sound-effects volume (silent if they've muted it).
+			client.playSoundEffect(config.sound().getSoundId());
 		}
-
-		final int volume = config.volume();
-		if (volume <= 0)
-		{
-			return;
-		}
-
-		// Map the 0-100 slider onto the game's 0-127 sound-effect volume range.
-		client.playSoundEffect(config.sound().getSoundId(), volume * 127 / 100);
 	}
 
 	private void refreshPanel()

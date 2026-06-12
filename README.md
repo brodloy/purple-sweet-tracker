@@ -3,7 +3,7 @@
 A RuneLite plugin for Old School RuneScape that tracks the purple sweets you eat.
 
 - 🔊 Plays a sound every time you eat a purple sweet — choose from several game
-  sounds (kerching/GE coins by default), with a volume slider.
+  sounds (kerching/GE coins by default). Plays at your in-game sound-effects volume.
 - 🖥️ Pick how it's shown: a **draggable overlay box**, an **item-timer style infobox**
   (item icon + amount or GP value), **both**, or **off**.
 - 📊 Tracks **all-time** and **this-session** sweets eaten + value, plus **sweets/hour**.
@@ -20,7 +20,7 @@ In the plugin config (gear icon) you'll find three sections:
 - **Display** — display style (overlay / infobox / both / off), infobox type (amount /
   value), whether stats shown are lifetime or session, which overlay lines to show
   (eaten / value / per hour), and the overlay title colour.
-- **Sound** — master on/off, which sound, and volume.
+- **Sound** — master on/off and which sound (plays at your in-game sound-effects volume).
 - **Notifications** — notify every N sweets (0 disables).
 
 ## Run it locally

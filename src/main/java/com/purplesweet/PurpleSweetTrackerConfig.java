@@ -7,7 +7,6 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
 import net.runelite.client.config.Range;
-import net.runelite.client.config.Units;
 
 @ConfigGroup(PurpleSweetTrackerConfig.GROUP)
 public interface PurpleSweetTrackerConfig extends Config
@@ -146,20 +145,6 @@ public interface PurpleSweetTrackerConfig extends Config
 	default SweetSound sound()
 	{
 		return SweetSound.KERCHING;
-	}
-
-	@Range(min = 0, max = 100)
-	@Units(Units.PERCENT)
-	@ConfigItem(
-		keyName = "volume",
-		name = "Volume",
-		description = "Playback volume for the sound.",
-		position = 3,
-		section = soundSection
-	)
-	default int volume()
-	{
-		return 100;
 	}
 
 	// -------------------------------- Notifications --------------------------------
