@@ -1,63 +1,52 @@
-# Purple Sweet Tracker
+<div align="center">
 
-A RuneLite plugin for Old School RuneScape that tracks the purple sweets you eat.
+<img src="banner.png" alt="Purple Sweet Tracker" width="100%" />
 
-- 🔊 Plays a sound every time you eat a purple sweet — choose from several game
-  sounds (kerching/GE coins by default). Plays at your in-game sound-effects volume.
-- 🖥️ Pick how it's shown: a **draggable overlay box**, an **item-timer style infobox**
-  (item icon + amount or GP value), **both**, or **off**.
-- 📊 Tracks **all-time** and **this-session** sweets eaten + value, plus **sweets/hour**.
-  The overlay/infobox can show either all-time or session figures.
-- 🔔 Optional **milestone notification** (chat + RuneLite notifier) every N sweets.
-- 🧰 Side panel (right-hand toolbar) with the stats, a **Reset** button, and a
-  **Copy stats** button.
-- 💾 All-time counts persist across client restarts.
+**Counts the purple sweets you eat, what they're worth, and kerchings on every one.**
 
-## Configuration
+[![RuneLite](https://img.shields.io/badge/RuneLite-Plugin-ea580c)](https://runelite.net/)
+[![Java](https://img.shields.io/badge/Java-11-007396?logo=openjdk&logoColor=white)](https://adoptium.net/temurin/releases/?version=11)
+[![License](https://img.shields.io/badge/License-BSD%202--Clause-blue.svg)](LICENSE)
+[![Game](https://img.shields.io/badge/Old%20School-RuneScape-5d0000)](https://oldschool.runescape.wiki/w/Purple_sweets)
 
-In the plugin config (gear icon) you'll find three sections:
+</div>
 
-- **Display** — display style (overlay / infobox / both / off), infobox type (amount /
-  value), whether stats shown are lifetime or session, which overlay lines to show
-  (eaten / value / per hour), and the overlay title colour.
-- **Sound** — master on/off and which sound (plays at your in-game sound-effects volume).
-- **Notifications** — notify every N sweets (0 disables).
+---
 
-## Run it locally
+Purple Sweet Tracker keeps a running count of the purple sweets you eat and their Grand Exchange
+value, both all-time and for the current session, and plays a sound on each one. Show the numbers
+however suits you - a draggable overlay, an item-timer style infobox, or just the side panel - and
+it keeps counting quietly in the background.
 
-You need **JDK 11** installed. Point `JAVA_HOME` at it, then use the Gradle wrapper
-from the project root.
+## Features
 
-Windows (PowerShell):
+🍬 **Sweets eaten and their value**
 
-```powershell
-$env:JAVA_HOME = "C:\path\to\your\jdk-11"
-.\gradlew.bat run
-```
+All-time and per-session counts of the purple sweets you eat, with their GP value and a
+sweets-per-hour rate. Your all-time totals are saved between sessions.
 
-macOS / Linux:
+🔊 **Kerching on every sweet**
 
-```bash
-export JAVA_HOME=/path/to/your/jdk-11
-./gradlew run
-```
+A sound each time you eat one - the Grand Exchange coin "kerching" by default, with a few other
+game sounds to choose from. It plays at your in-game sound-effects volume, and you can switch it off.
 
-This launches RuneLite with the plugin loaded. Log in, eat a purple sweet, and watch
-the counter tick up. Find **Purple Sweet Tracker** in the side toolbar for the stats.
+🖥️ **Overlay, infobox, or both**
 
-To just compile and run the checks, use `gradlew build` instead of `run`.
+Show a draggable, snappable overlay box, an item-timer style infobox (set to the amount eaten or the
+GP value), both, or neither. Either one can show your lifetime totals or just this session, and the
+overlay's lines and colour are yours to set.
 
-## Submit it to the Plugin Hub
+🧰 **Side panel**
 
-1. Push this project to a **public GitHub repository**.
-2. Fork [runelite/plugin-hub](https://github.com/runelite/plugin-hub).
-3. Add a file named `plugins/purple-sweet-tracker` (no extension) containing:
-   ```
-   repository=https://github.com/<your-username>/<your-repo>.git
-   commit=<full 40-character commit hash you want published>
-   ```
-4. Open a pull request against `runelite/plugin-hub`. A maintainer reviews it; once
-   merged the plugin appears in the in-client Plugin Hub for everyone.
+A panel with your all-time and session stats and rate, a reset button, and a copy-to-clipboard
+button for sharing your numbers.
 
-See the [Plugin Hub guide](https://github.com/runelite/plugin-hub) for the full rules
-(icon, naming, and review requirements).
+🔔 **Milestone pings**
+
+An optional chat message and notification every set number of sweets, so you know when you hit a
+round total.
+
+## License
+
+BSD 2-Clause. Old School RuneScape and purple sweets are © Jagex Ltd; this is a fan-made plugin, not
+affiliated with or endorsed by Jagex. The infobox uses the in-game purple sweets sprite.
